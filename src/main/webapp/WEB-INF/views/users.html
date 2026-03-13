@@ -1,25 +1,58 @@
-<html>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 70%;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
 
 <h2>Users</h2>
 
-<a href="/users/new">Add User</a>
+<a th:href="@{/users/new}">Add User</a>
 
 <table border="1">
+
     <tr>
         <th>ID</th>
         <th>First Name</th>
         <th>Last Name</th>
+        <th>Email</th>
+        <th>Age</th>
         <th>Action</th>
     </tr>
 
     <tr th:each="user : ${users}">
+
         <td th:text="${user.id}"></td>
         <td th:text="${user.firstName}"></td>
         <td th:text="${user.lastName}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.age}"></td>
+
         <td>
-            <a th:href="@{/users/delete/{id}(id=${user.id})}">Delete</a>
+
+            <a th:href="@{/users/edit/{id}(id=${user.id})}">Edit</a>
+
+            |
+
+            <a th:href="@{/users/delete/{id}(id=${user.id})}">
+                Delete
+            </a>
+
         </td>
+
     </tr>
 
 </table>

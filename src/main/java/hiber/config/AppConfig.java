@@ -7,8 +7,11 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
 import javax.sql.DataSource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
 import java.util.Properties;
 
 @Configuration
@@ -23,7 +26,7 @@ public class AppConfig {
         this.env = env;
     }
 
-    // 1. DataSource configuration
+    // 1️⃣ Database connection
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
@@ -34,28 +37,41 @@ public class AppConfig {
         return ds;
     }
 
-    // 2. EntityManagerFactory configuration
+    // 2️⃣ EntityManagerFactory
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+
+        LocalContainerEntityManagerFactoryBean emf =
+                new LocalContainerEntityManagerFactoryBean();
+
         emf.setDataSource(dataSource());
-        emf.setPackagesToScan("hiber.model"); // package containing @Entity classes
+        emf.setPackagesToScan("hiber.model");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
-        Properties jpaProperties = new Properties();
-        jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
-        jpaProperties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-        emf.setJpaProperties(jpaProperties);
+        Properties props = new Properties();
+        props.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+        props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+
+        emf.setJpaProperties(props);
 
         return emf;
     }
 
-    // 3. TransactionManager configuration
+    // 3️⃣ Transaction Manager
     @Bean
     public JpaTransactionManager transactionManager() {
+
         JpaTransactionManager tm = new JpaTransactionManager();
         tm.setEntityManagerFactory(entityManagerFactory().getObject());
+
         return tm;
     }
+
+    // 4️⃣ Validator Bean (needed for @Valid)
+    @Bean
+    public LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
+    }
+
 }

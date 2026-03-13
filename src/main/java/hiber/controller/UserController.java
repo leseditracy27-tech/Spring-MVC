@@ -2,10 +2,14 @@ package hiber.controller;
 
 import hiber.model.User;
 import hiber.service.UserServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -15,31 +19,37 @@ public class UserController {
     private UserServiceImpl userService;
 
     @GetMapping
-    public String listUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+    public String listUsers(Model model){
+        model.addAttribute("users",userService.getAllUsers());
         return "users";
     }
 
     @GetMapping("/new")
-    public String createUserForm(Model model) {
-        model.addAttribute("user", new User());
+    public String createUserForm(Model model){
+        model.addAttribute("user",new User());
         return "form";
     }
 
     @PostMapping
-    public String saveUser(@ModelAttribute("user") User user) {
+    public String saveUser(@Valid @ModelAttribute("user") User user,
+                           BindingResult result){
+
+        if(result.hasErrors()){
+            return "form";
+        }
+
         userService.saveUser(user);
         return "redirect:/users";
     }
 
     @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id)); // ✅ FIX
-        return "form";
+    public String editUserForm(@PathVariable Long id,Model model){
+        model.addAttribute("user",userService.getUserById(id));
+        return "edit";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
         return "redirect:/users";
     }
