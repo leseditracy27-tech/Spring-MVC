@@ -13,11 +13,20 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<User> getAllUsers() {
-        return entityManager.createQuery("from User", User.class).getResultList();
+    @Override
+    public List<User> findAll() {
+        return entityManager
+                .createQuery("from User", User.class)
+                .getResultList();
     }
 
-    public void saveUser(User user) {
+    @Override
+    public User findId(Long id) {
+        return entityManager.find(User.class, id);
+    }
+
+    @Override
+    public void save(User user) {
         if (user.getId() == null) {
             entityManager.persist(user);
         } else {
@@ -25,31 +34,11 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    public User getUserById(Long id) {
-        return entityManager.find(User.class, id);
-    }
-
-    public void deleteUser(Long id) {
-        User user = getUserById(id);
-        if (user != null) entityManager.remove(user);
-    }
-
-    public List<User> findAll() {
-        return List.of();
-    }
-
-    @Override
-    public User findId(Long id) {
-        return null;
-    }
-
-    @Override
-    public void save(User user) {
-
-    }
-
     @Override
     public void delete(Long id) {
-
+        User user = entityManager.find(User.class, id);
+        if (user != null) {
+            entityManager.remove(user);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package hiber.controller;
 
 import hiber.model.User;
-import hiber.service.UserServiceImpl;
+import hiber.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,17 +16,17 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @GetMapping
     public String listUsers(Model model){
-        model.addAttribute("users",userService.getAllUsers());
+        model.addAttribute("users", userService.getAllUsers());
         return "users";
     }
 
     @GetMapping("/new")
     public String createUserForm(Model model){
-        model.addAttribute("user",new User());
+        model.addAttribute("user", new User());
         return "form";
     }
 
@@ -43,8 +43,8 @@ public class UserController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id,Model model){
-        model.addAttribute("user",userService.getUserById(id));
+    public String editUserForm(@PathVariable Long id, Model model){
+        model.addAttribute("user", userService.getUserById(id));
         return "edit";
     }
 
