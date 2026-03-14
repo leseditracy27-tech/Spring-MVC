@@ -17,7 +17,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan("hiber")
 @EnableTransactionManagement
-@PropertySource("classpath:db.properties")
+@PropertySource("classpath:dp.properties")
 public class AppConfig {
 
     private final Environment env;
